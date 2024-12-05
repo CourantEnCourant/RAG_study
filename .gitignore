@@ -8,8 +8,7 @@ data/*
 model/*
 
 # Log
-log/
-scripts/test-trainer/
+log/*
 
 # Pycharm files
 **/__pycache__/
