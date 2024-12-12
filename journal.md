@@ -6,3 +6,6 @@
 - [Jupyter Lab server](https://jha-tools.huma-num.fr/)
 - [智谱开放平台](https://open.bigmodel.cn/)
 - 智谱sdk：[doc](https://github.com/MetaGLM/zhipuai-sdk-python-v4), [git](https://github.com/MetaGLM/zhipuai-sdk-python-v4)
+
+# 12/12/24
+- [Rag with Haystack (don't need Api)](https://haystack.deepset.ai/tutorials/27_first_rag_pipeline)
