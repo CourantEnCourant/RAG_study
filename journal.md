@@ -9,3 +9,6 @@
 
 # 12/12/24
 - [Rag with Haystack (don't need Api)](https://haystack.deepset.ai/tutorials/27_first_rag_pipeline)
+
+# 19/12/24
+- [Gorilla Model](https://github.com/ShishirPatil/gorilla)
