@@ -12,3 +12,4 @@
 
 # 19/12/24
 - [Gorilla Model](https://github.com/ShishirPatil/gorilla)
+- [gorilla-llm/gorilla-7b-hf-delta-v0](https://huggingface.co/gorilla-llm/gorilla-7b-hf-delta-v0)
