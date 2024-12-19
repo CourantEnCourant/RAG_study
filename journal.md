@@ -1,6 +1,7 @@
-# Tutorial / reproduction
-- [raft-well-architectured](https://github.com/jjovalle99/raft-well-architected)
-- [azure-openai-raft](https://github.com/Azure-Samples/azure-openai-raft)
+# 20/12/24
+- Two tutorial / reproduction
+  * [raft-well-architectured](https://github.com/jjovalle99/raft-well-architected)
+  * [azure-openai-raft](https://github.com/Azure-Samples/azure-openai-raft)
 
 
 # 19/12/24
