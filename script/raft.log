@@ -1,0 +1,2 @@
+2025-01-11 01:23:39,130  INFO [    ] raft Dataset has 150 rows
+2025-01-11 01:23:39,146  INFO [    ] raft Converting arrow file ../data/sample_data/sample_ds4/data-00000-of-00001.arrow to jsonl completion file ../data/sample_data/sample_ds4/output.completion.jsonl

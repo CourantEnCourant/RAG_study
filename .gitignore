@@ -18,6 +18,7 @@ log/*
 **/.ipynb_checkpoints/
 
 #virtual env
+.env
 
 #gitkeep
 !**/*.gitkeep
