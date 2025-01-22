@@ -93,20 +93,28 @@ def generate_instructions_hf(chunk: str, x: int = 5, model_name: str = "t5-small
     model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
 
     # Move model to GPU if available
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    if torch.backends.mps.is_available():
+        device = torch.device("mps")
+    elif torch.cuda.is_available():
+        device = torch.device("cuda")
+    else:
+        device = torch.device("cpu")
+        
     model.to(device)
-
+    
     input_text = f"Generate questions based on the following text: {chunk}"
     inputs = tokenizer(input_text, return_tensors="pt", truncation=True, padding="longest").to(device)
 
     outputs = model.generate(
-        inputs.input_ids, 
+        inputs.input_ids,
         max_length=64, 
         num_beams=x,  # Using beam search with `x` beams
         num_return_sequences=x  # Returning `x` sequences
     )
 
     questions = [tokenizer.decode(output, skip_special_tokens=True) for output in outputs]
+    
+    print(questions)
     
     return questions
 
@@ -115,11 +123,33 @@ def generate_label_hf(question: str, context: str, model_name: str = "deepset/ro
     Uses a Hugging Face model to generate an answer to the given question based on the context, utilizing the GPU if available.
     """
     # Load the Hugging Face model and tokenizer for question-answering
-    question_answering_pipeline = pipeline("question-answering", model=model_name, device=0 if torch.cuda.is_available() else -1)
     
-    result = question_answering_pipeline(question=question, context=context)
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model = AutoModelForQuestionAnswering.from_pretrained(model_name)
     
-    return result['answer']
+    if torch.backends.mps.is_available():
+        device = torch.device("mps")
+    elif torch.cuda.is_available():
+        device = torch.device("cuda")
+    else:
+        device = torch.device("cpu")
+        
+    model.to(device)
+    
+    inputs = tokenizer(question, context, return_tensors="pt").to(device)
+
+    with torch.no_grad():
+        outputs = model(**inputs)
+
+    start_scores = outputs.start_logits
+    end_scores = outputs.end_logits
+
+    start_idx = torch.argmax(start_scores)
+    end_idx = torch.argmax(end_scores)
+
+    answer = tokenizer.decode(inputs["input_ids"][0][start_idx:end_idx + 1])
+    
+    return answer
 
 def add_chunk_to_dataset(
     chunks: list[str], 
@@ -128,7 +158,7 @@ def add_chunk_to_dataset(
     x: int = 5, 
     num_distract: int = 3, 
     p: float = 0.8,
-    model_name_qg: str = "t5-small",
+    model_name_qg: str = "google/flan-t5-large",
     model_name_qa: str = "deepset/roberta-base-squad2"
 ) -> None:
     """
@@ -211,6 +241,7 @@ def load_checkpoint(filename):
         return int(f.read())
 
 def main():
+    logger.info("Starting the Hugging Face processing script...")
     global ds
 
     # Get command line arguments
@@ -236,7 +267,7 @@ def main():
             save_checkpoint(i, "checkpoint.txt")
 
             perc = ceil(i / num_chunks * 100)
-            logger.info(f"Adding chunk {i}/{num_chunks}")
+            logger.info(f"now Adding chunk {i}/{num_chunks}")
             add_chunk_to_dataset(chunks, chunk, args.doctype, args.questions, NUM_DISTRACT_DOCS)
 
             if (i + 1) % N == 0:
@@ -275,5 +306,4 @@ def main():
                 shutil.rmtree(os.path.dirname(args.output) + "/" + filename)
 
 if __name__ == "__main__":
-    logger.info("Starting the Hugging Face processing script...")
     main()
