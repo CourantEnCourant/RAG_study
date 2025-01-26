@@ -7,7 +7,7 @@ import random
 import os, shutil
 from math import ceil
 from datasets import Dataset, concatenate_datasets
-from transformers import pipeline, AutoTokenizer, AutoModelForSeq2SeqLM, AutoModelForQuestionAnswering
+from transformers import pipeline, AutoTokenizer, AutoModelForSeq2SeqLM, AutoModelForQuestionAnswering, AutoModelForCausalLM
 import torch
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -125,7 +125,7 @@ def generate_label_hf(question: str, context: str, model_name: str = "deepset/ro
     # Load the Hugging Face model and tokenizer for question-answering
     
     tokenizer = AutoTokenizer.from_pretrained(model_name)
-    model = AutoModelForQuestionAnswering.from_pretrained(model_name)
+    model = AutoModelForCausalLM.from_pretrained(model_name) #AutoModelForQuestionAnswering.from_pretrained(model_name)
     
     if torch.backends.mps.is_available():
         device = torch.device("mps")
@@ -159,7 +159,7 @@ def add_chunk_to_dataset(
     num_distract: int = 3, 
     p: float = 0.8,
     model_name_qg: str = "google/flan-t5-large",
-    model_name_qa: str = "deepset/roberta-base-squad2"
+    model_name_qa: str = "HPAI-BSC/Llama3-Aloe-8B-Alpha" #"deepset/roberta-base-squad2"
 ) -> None:
     """
     Given a chunk, create {Q, A, D} triplets and add them to the dataset using Hugging Face models.
